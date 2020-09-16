@@ -1,5 +1,6 @@
 package info.jackwade.calcengine;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -35,15 +36,28 @@ public class Main {
 
     private static void performOperation(String[] parts) {
         char opCode = opCodeFromString(parts[0]);
-        double leftVal = valueFromWord(parts[1]);
-        double rightVal = valueFromWord(parts[2]);
-        double result = execute(opCode, leftVal, rightVal);
-        displayResult(opCode, leftVal, rightVal, result);
+        if(opCode == 'w')
+            handleWhen(parts);
+        else {
+            double leftVal = valueFromWord(parts[1]);
+            double rightVal = valueFromWord(parts[2]);
+            double result = execute(opCode, leftVal, rightVal);
+            displayResult(opCode, leftVal, rightVal, result);
+        }
+    }
+
+    private static void handleWhen(String[] parts) {
+        LocalDate startDate = LocalDate.parse(parts[1]);
+        long daysToAdd = (long) valueFromWord(parts[2]);
+        LocalDate newDate = startDate.plusDays(daysToAdd);
+        String output = String.format("%s plus %d days is %s", startDate,daysToAdd,newDate);
+        System.out.println(output);
     }
 
     private static void displayResult(char opCode, double leftVal, double rightVal, double result) {
         char symbol = symbolFromOpCode(opCode);
-        StringBuilder builder = new StringBuilder(20);
+
+        /*StringBuilder builder = new StringBuilder(20);
         builder.append(leftVal);
         builder.append(" ");
         builder.append(symbol);
@@ -51,7 +65,9 @@ public class Main {
         builder.append(rightVal);
         builder.append(" = ");
         builder.append(result);
-        String output = builder.toString();
+        String output = builder.toString(); */
+
+        String output = String.format("%.3f %c %.3f = %.3f",leftVal,symbol,rightVal,result);
         System.out.println(output);
     }
 
@@ -110,13 +126,16 @@ public class Main {
                 "zero","one","two","three","four",
                 "five","six","seven","eight","nine"
         };
-        double value = 0d;
+        double value = -1d;
         for(int index =0; index < numberWords.length; index++) {
             if(word.equals(numberWords[index])) {
                 value = index;
                 break;
             }
         }
+        if (value == -1d)
+            value = Double.parseDouble(word);
+
         return value;
     }
 }
