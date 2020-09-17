@@ -1,5 +1,6 @@
 package info.jackwade.calcengine;
 
+import java.lang.management.ManagementFactory;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -12,18 +13,40 @@ public class Main {
         double[] results = new double[opCodes.length];
 
         if (args.length == 0) { //Option1 - No Args, use pre defined values
-            for (int i = 0; i < opCodes.length; i++) {
+            performCalculations();
+            /*for (int i = 0; i < opCodes.length; i++) {
                 results[i] = execute(opCodes[i], leftVals[i], rightVals[i]);
             }
 
             for (double currentResult : results)
-                System.out.println(currentResult);
+                System.out.println(currentResult);*/
         } else if (args.length == 1 && args[0].equals("interactive")) //Option2 - 1 Arg is passed "Interactive" pushed to command line input
             executeInteractively();
         else if (args.length == 3) //Option3 - 3 Args passed outlining 3 items at start up to calc
             handleCommandLine(args);
         else
             System.out.println("Please provide an operation code and 2 numeric values");
+    }
+
+    static void performCalculations() {
+        MathEquation[] equations = new MathEquation[4];
+        equations[0] = create(100.0d,50.0d,'d');
+        equations[1] = create(25.0d,92.0d,'a');
+        equations[2] = create(225.0d,17.0d,'s');
+        equations[3] = create(11.0d,3.0d,'m');
+
+        for(MathEquation equation : equations) {
+            equation.execute();
+            System.out.println("Result = " + equation.result);
+        }
+    }
+
+    private static MathEquation create(double leftVal, double rightVal, char opCode) {
+        MathEquation equation = new MathEquation();
+        equation.leftVal = leftVal;
+        equation.rightVal = rightVal;
+        equation.opCode = opCode;
+        return equation;
     }
 
     static void executeInteractively() {
